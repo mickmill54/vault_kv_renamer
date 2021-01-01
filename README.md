@@ -44,7 +44,6 @@ config.json
 ```
 
 ### Explanation of keys and values
-===
 
 | Key           | Value                                                                           |
 | ---           | -----                                                                           |
@@ -54,13 +53,10 @@ config.json
 | `tmp_file`    | The name of the output temp JSON file; you should not need to change this value |
 
 ## 2. Installation instructions
-=======
 
 The code assumes that both the Hashi Vault client and jq are installed before you start and tests for the presence of both.
 
 ### Installing Vault and jq
-===
-
 If you are using the Homebrew package manager on mac OS, run the following:
 
 ```
@@ -71,8 +67,6 @@ If you are using the Homebrew package manager on mac OS, run the following:
 This script has not been tested on Windows or Linux, only macOS. I will test Ubuntu at some point and refactor as needed. This "*should*" work to rename and copy across vault instances.  Like a move and rename.  I have not tested that yet.
 
 ### Installing the script
-===
-
 ```
 # Clone the repo and then change to the directory.
 $ git clone <this repo url>
@@ -83,7 +77,6 @@ $ cd vault_kv_renamer
 ---
 
 ## 3. Running the script
-===
 Command line arguments description
 
 ```
@@ -122,7 +115,6 @@ Usage:
 ---
 
 ## 4. Acknowledgements
-===
 Many thanks to the following folks:
 
 * agaudreault-jive (https://github.com/hashicorp/vault/issues/5275)
