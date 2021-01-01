@@ -6,7 +6,7 @@
 
  
 
-This bash script was built primarily to rename a "root" path for  vault key values. For example if you have a path kv/cnn and you want to rename the path to cnn00, this is the tool to accomplish that task.
+This bash script was built primarily to rename a "root" path for  vault key values. For example if you have a path "kv/cnn" and you want to rename the path to "kv/cnn00", this is the tool to accomplish that task.
 
 ## Contents
 
