@@ -1,4 +1,4 @@
-# Vault kv migration tool
+# Vault kv renacer tool
 
 **Author: Mick Miller**
 
@@ -6,16 +6,14 @@
 
  
 
-This bash script was built primarily to migrate a ton of secrets from an old, open-source version of Vault to Vault Enterprise. Surprisingly, there was no migration tool available from Hashicorp at the time of this work, so I created one.
+This bash script was built primarily to rename a "root" path for  vault key values. For example if you have a path kv/cnn and you want to rename the path to cnn00, this is the tool to accomplish that task.
 
 ## Contents
 
-1. The config.json file
+1. The config_rename.json file
 2. Installation instructions
 3. Running the script
-4. Useful commands and randomish stuff
-5. References
-6. Acknowledgements
+4. Acknowledgements
 
 A couple of notes before diving in: 
 
@@ -27,9 +25,9 @@ A couple of notes before diving in:
 
 ---
 
-## 1. The config.json file
+## 1. The config_rename.json file
 
-This configuration file is used to reduce the amout of command line arguments and limit the arguments to:
+This configuration file is used to reduce the amount of command line arguments and limit the arguments to:
 
 * The path to find the secrets; and
 * Not storing the tokens in the configurations or code.
@@ -38,11 +36,10 @@ config.json
 
 ```
 { 
-    "type_val": "general",
+    "type_val": "kv",
     "src_url": "https://old_vault.example.com",
     "dest_url": "https://new_vault.example.com",
     "tmp_file": "./tmp.json",
-    "config_file":"./config.yaml"
 }
 ```
 
@@ -54,9 +51,6 @@ config.json
 | `src_url`     | The source vault instance URL                                                   |
 | `dest_url`    | the destination vault instance URL                                              |
 | `tmp_file`    | The name of the output temp JSON file; you should not need to change this value |
-| `config_file` | The name of this file                                                           |
-
----
 
 ## 2. Installation instructions
 =======
@@ -72,21 +66,15 @@ If you are using the Homebrew package manager on mac OS, run the following:
  $ brew install vault
 ```
 
-This script has not been tested on Windows or Linux, only macOS. I will test Ubuntu at some point and refactor as needed.
+This script has not been tested on Windows or Linux, only macOS. I will test Ubuntu at some point and refactor as needed. This "*should*" work to rename and copy across vault instances.  Like a move and rename.  I have not tested that yet.
 
 ### Installing the script
 
 ```
 # Clone the repo and then change to the directory.
 $ git clone <this repo url>
-$ cd vault_kv_migration
+$ cd vault_kv_renamer
 
-# Run the script
-$ vault_kv_migration.sh -s "${SRC_TOKEN}" -d "${DEST_TOKEN}" -p "${VAULT_PATH}"
-Usage:
-  Format : ./vault_kv_migrator.sh {source token} {destination token} {path}
-  Example: ./vault_kv_migrator.sh -s xxxxxxx -d xxxxxxx -p /secret/cnn/
-  Note   : A trailing slash in path is required."
 ```
 
 ---
@@ -96,94 +84,40 @@ Usage:
 Command line arguments description
 
 ```
-$ vault_kv_migration.sh -s "${SRC_TOKEN}" -d "${DEST_TOKEN}" -p "${VAULT_PATH}"
+ echo "You typed:" "${0}" -s "${SRC_TOKEN}" -d "${DEST_TOKEN}" -p "${VAULT_PATH_OLD}" -o "${OLD_ROOT}" -n "${NEW_ROOT}"
+  echo
+  echo "Usage: "
+  echo "format : " "${0} " -s {source token} -d {destination token} -p {path} -o {old_root} -n {new_root}
+  echo "example: " "${0} " "-s xxxxxxx -d xxxxxxx -p /secret/cnn/" -o kv/cnn/ -n kv/cnn00/
+  echo "Note: trailing slash in path is important"
+
+$ vault_kv_renamer.sh \
+  -s "${SRC_TOKEN}" \
+  -d "${DEST_TOKEN}" \
+  -p "${VAULT_PATH_OLD}" \
+  -o "${OLD_ROOT}" \
+  -n "${NEW_ROOT}"
 
 Usage:
-  Format : ./vault_kv_migrator.sh {source token} {destination token} {path}
-  Example: ./vault_kv_migrator.sh -s xxxxxxx -d xxxxxxx -p /secret/cnn/
+  Format : ./vault_kv_migrator.sh \ 
+    -s {source token} \
+    -d {destination token} \
+    -p {path} 
+    -o {old_root} 
+    -n {new_root}
+  
+  Example: ./vault_kv_migrator.sh \
+    -s xxxxxxx \
+    -d xxxxxxx \ 
+    -p /secret/cnn/" \ 
+    -o kv/cnn/ \
+    -n kv/cnn00/ \
   
   Note   : A trailing slash in path is required."
 ```  
 
----
 
-## 4. Useful commands and randomish stuff
-
-## Log in to Vault
-
-```
-export VAULT_ADDR=https://vault.example.com
-vault login -method=ldap mount=ad username=mick
-```
-
-View login name**
-```
-TOKEN=$(vault print token) | vault token lookup $TOKEN
-```
-
-### Log out of Vault
-
-I know; strange, but effective.
-
-```
-rm ~/.vault-token
-```
-
-### Check status
-
-```
-vault status
-```
-
-### Create a secretes engine
-
-```
-vault secrets enable -path=kv kv-v2
-vault kv enable-versioning kv
-vault write kv/config max_versions=4
-```
-
-### Create Active Directory groups
-
-```
-vault write auth/ad/groups/admin-group policies=admins,app1,app1
-vault write auth/ad/groups/app-group policies=app1,app2
-vault read auth/ad/groups/admin-group
-vault read auth/ad/groups/app-group
-vault list auth/ad/groups
-```
-
-### Create a policy
-
-```
-vault policy write admins ./admins-policy.hcl
-vault policy list
-vault policy read admins
-```
-
-### Create two secrets
-
-```
-vault kv put kv/anthos/test test=12345
-vault kv put kv/gcp/test test=12345
-
-vault kv list kv/anthos
-vault kv list kv/gco
-vault kv list -format=json kv/gcp
-```
-
----
-
-## 5. References
-
-Below are a couple of good references for learning the Terraform Vault provder information:
-
-* https://learn.hashicorp.com/tutorials/vault/codify-mgmt-enterprise
-* https://registry.terraform.io/providers/hashicorp/vault/latest/docs
-
----
-
-## 6. Acknowledgements
+## 4. Acknowledgements
 
 Many thanks to the following folks:
 
