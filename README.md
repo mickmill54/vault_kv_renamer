@@ -1,4 +1,4 @@
-# Vault kv renacer tool
+# Vault kv renamer tool
 
 **Author: Mick Miller**
 
